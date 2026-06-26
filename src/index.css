@@ -1,2 +1,77 @@
 @import "tailwindcss";
 
+:root {
+  /* Premium Professional Light Theme Variables */
+  --bg-main: #fcfdff; /* ultra-clean white-indigo */
+  --bg-section-alt: #f4f7fc; /* premium soft blue-gray */
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-hover-bg: rgba(255, 255, 255, 0.96);
+  --card-border: rgba(99, 102, 241, 0.12); /* indigo-accented slate */
+  --card-hover-border: rgba(99, 102, 241, 0.28);
+  --text-primary: #0f172a; /* deep slate-900 */
+  --text-secondary: #334155; /* slate-700 */
+  --text-muted: #64748b; /* slate-500 */
+  --grid-opacity: 0.05;
+  --glow-opacity-mul: 0.7;
+  --card-shadow: 0 12px 34px -10px rgba(99, 102, 241, 0.06), 0 1px 3px rgba(0, 0, 0, 0.01);
+  --card-hover-shadow: 0 26px 50px -12px rgba(99, 102, 241, 0.14), 0 8px 24px -8px rgba(99, 102, 241, 0.05);
+  --glass-shimmer: rgba(255, 255, 255, 0.12);
+  --progress-bg: rgba(99, 102, 241, 0.08);
+}
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --color-theme-bg: var(--bg-main);
+  --color-theme-bg-alt: var(--bg-section-alt);
+  --color-theme-card: var(--card-bg);
+  --color-theme-card-hover: var(--card-hover-bg);
+  --color-theme-border: var(--card-border);
+  --color-theme-border-hover: var(--card-hover-border);
+  --color-theme-text: var(--text-primary);
+  --color-theme-text-muted: var(--text-secondary);
+  --color-theme-text-faint: var(--text-muted);
+  
+  --shadow-theme-card: var(--card-shadow);
+  --shadow-theme-card-hover: var(--card-hover-shadow);
+
+  --animate-blob: blob 16s infinite ease-in-out;
+  --animate-blob-reverse: blob-reverse 20s infinite ease-in-out;
+  --animate-marching-ants: marching-ants 0.8s linear infinite;
+
+  @keyframes blob {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(120px, -80px) scale(1.12);
+    }
+    66% {
+      transform: translate(-60px, 80px) scale(0.92);
+    }
+  }
+  @keyframes blob-reverse {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(-100px, 120px) scale(0.88);
+    }
+  }
+  @keyframes marching-ants {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 12;
+    }
+  }
+}
+
+@utility scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  &::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+}
+
