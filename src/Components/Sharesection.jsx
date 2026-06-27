@@ -89,6 +89,20 @@ const SHARE_BUTTONS = [
     text: "text-violet-600",
     glowColor: "rgba(139, 92, 246, 0.08)",
   },
+  {
+    id: "qr",
+    label: "Generate QR Code",
+    shortLabel: "QR Code",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+          d="M12 4v1m-8 7h1m14 0h1m-9 8v1m-6-13h3m-3 3h3m0-3v3m10-3h3m-3 3h3m0-3v3M4 17h3m-3 3h3m0-3v3m4-12h2m-2 2h2m-2-2v2m8 10v.01M16 16v.01M17 17v.01M17 16v.01M16 17v.01" />
+      </svg>
+    ),
+    bg: "bg-indigo-500/8 hover:bg-indigo-500/12 border-indigo-500/15 hover:border-indigo-500/30",
+    text: "text-indigo-600",
+    glowColor: "rgba(99, 102, 241, 0.08)",
+  },
 ];
 
 const FILE_COLORS = [
@@ -231,6 +245,7 @@ export default function ShareSection({ images, getImageUrl }) {
   const [shareLink, setShareLink] = useState(null);
   const [emailInput, setEmailInput] = useState("");
   const [showEmailInput, setShowEmailInput] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
   const [selectedImageIds, setSelectedImageIds] = useState([]);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const sectionRef = useRef(null);
@@ -319,6 +334,27 @@ export default function ShareSection({ images, getImageUrl }) {
     setTimeout(() => setToastMsg(null), 2200);
   };
 
+  const handleDownloadQr = async () => {
+    try {
+      showToast("Downloading QR Code…");
+      const url = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shareLink)}`;
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `qrcode_${latestImage?.originalName?.replace(/\.[^/.]+$/, "") || "share"}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+      showToast("QR Code downloaded!");
+    } catch (err) {
+      const fallbackUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shareLink)}`;
+      window.open(fallbackUrl, "_blank");
+    }
+  };
+
   const handleShare = async (btn) => {
     setClickedBtn(btn.id);
     setTimeout(() => setClickedBtn(null), 600);
@@ -348,6 +384,11 @@ export default function ShareSection({ images, getImageUrl }) {
         await navigator.clipboard.writeText(textToCopy);
         setShareLink(textToCopy);
         showToast("Links copied!");
+        return;
+      }
+
+      if (btn.id === "qr") {
+        setShowQrModal(true);
         return;
       }
     } catch {
@@ -758,7 +799,7 @@ export default function ShareSection({ images, getImageUrl }) {
               )}
 
               {/* Share buttons */}
-              <div className="mx-5 mb-5 grid grid-cols-3 gap-2.5">
+              <div className="mx-5 mb-5 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {SHARE_BUTTONS.map((btn, i) => (
                   <motion.button
                     key={btn.id}
@@ -849,6 +890,73 @@ export default function ShareSection({ images, getImageUrl }) {
       </div>
 
       <AnimatedToast message={toastMsg} />
+
+      {/* QR Code Modal */}
+      <AnimatePresence>
+        {showQrModal && shareLink && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowQrModal(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-md p-4 cursor-zoom-out animate-fade-in"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-sm w-full rounded-3xl border border-slate-200/50 bg-white/95 p-6 shadow-2xl flex flex-col items-center dark:border-slate-800/50 dark:bg-slate-950/95 cursor-default backdrop-blur-xl"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-500 hover:text-white flex items-center justify-center text-slate-500 text-sm transition-all border border-slate-200/50 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 cursor-pointer"
+              >
+                ✕
+              </button>
+
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-4">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+                    d="M12 4v1m-8 7h1m14 0h1m-9 8v1m-6-13h3m-3 3h3m0-3v3m10-3h3m-3 3h3m0-3v3M4 17h3m-3 3h3m0-3v3m4-12h2m-2 2h2m-2-2v2m8 10v.01M16 16v.01M17 17v.01M17 16v.01M16 17v.01" />
+                </svg>
+              </div>
+
+              <h3 className="text-base font-bold text-slate-900 dark:text-white text-center">Scan share link</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 text-center max-w-[240px] truncate px-2 bg-slate-100 dark:bg-slate-900 py-1 rounded-full border border-slate-200/40 dark:border-slate-800/40">
+                {selectedImageIds.length > 1 ? `${selectedImageIds.length} shared images` : (latestImage ? latestImage.originalName : "Shared link")}
+              </p>
+
+              {/* QR Code Container with subtle frame/glow */}
+              <div className="my-6 p-4 bg-white rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-md">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareLink)}`}
+                  alt="QR Code"
+                  className="w-48 h-48 object-contain"
+                />
+              </div>
+
+              {/* Download / Close Buttons */}
+              <div className="flex gap-2 w-full mt-2">
+                <button
+                  onClick={handleDownloadQr}
+                  className="flex-1 py-2.5 text-xs font-semibold rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all cursor-pointer text-center"
+                >
+                  Download QR
+                </button>
+                <button
+                  onClick={() => setShowQrModal(false)}
+                  className="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-900/60 active:scale-95 transition-all cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Lightbox Modal */}
       <AnimatePresence>
