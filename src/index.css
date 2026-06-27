@@ -2,21 +2,21 @@
 
 :root {
   /* Premium Professional Light Theme Variables */
-  --bg-main: #fcfdff; /* ultra-clean white-indigo */
-  --bg-section-alt: #f4f7fc; /* premium soft blue-gray */
-  --card-bg: rgba(255, 255, 255, 0.72);
-  --card-hover-bg: rgba(255, 255, 255, 0.96);
-  --card-border: rgba(99, 102, 241, 0.12); /* indigo-accented slate */
-  --card-hover-border: rgba(99, 102, 241, 0.28);
-  --text-primary: #0f172a; /* deep slate-900 */
-  --text-secondary: #334155; /* slate-700 */
-  --text-muted: #64748b; /* slate-500 */
-  --grid-opacity: 0.05;
-  --glow-opacity-mul: 0.7;
-  --card-shadow: 0 12px 34px -10px rgba(99, 102, 241, 0.06), 0 1px 3px rgba(0, 0, 0, 0.01);
-  --card-hover-shadow: 0 26px 50px -12px rgba(99, 102, 241, 0.14), 0 8px 24px -8px rgba(99, 102, 241, 0.05);
-  --glass-shimmer: rgba(255, 255, 255, 0.12);
-  --progress-bg: rgba(99, 102, 241, 0.08);
+  --bg-main: #f8fafc; /* Clean, professional slate-50 */
+  --bg-section-alt: #f1f5f9; /* Slate-100 for alternate sections */
+  --card-bg: #ffffff; /* Solid crisp white cards */
+  --card-hover-bg: #ffffff;
+  --card-border: #e2e8f0; /* Crisp slate-200 borders */
+  --card-hover-border: #cbd5e1; /* Slate-300 borders on hover */
+  --text-primary: #0f172a; /* Deep slate-900 */
+  --text-secondary: #475569; /* Slate-600 secondary text */
+  --text-muted: #94a3b8; /* Slate-400 muted text */
+  --grid-opacity: 0.02;
+  --glow-opacity-mul: 0.3;
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02); /* Professional micro-border shadow */
+  --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  --glass-shimmer: rgba(255, 255, 255, 0.4);
+  --progress-bg: rgba(99, 102, 241, 0.05);
 }
 
 @theme {

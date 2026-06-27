@@ -76,6 +76,20 @@ function TiltCard({ f, index }) {
     setIsHovered(false);
   };
 
+  const handleCardClick = () => {
+    let targetId = "";
+    if (f.id === 1) targetId = "storage-section";
+    else if (f.id === 2 || f.id === 3) targetId = "share-section";
+    else if (f.id === 4) targetId = "upload-section";
+
+    if (targetId) {
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
   return (
     <motion.div
       ref={cardRef}
@@ -86,6 +100,7 @@ function TiltCard({ f, index }) {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
+      onClick={handleCardClick}
       style={{
         rotateX,
         rotateY,
@@ -254,11 +269,76 @@ export default function Features() {
 
   return (
     <section
+      id="features-section"
       ref={sectionRef}
       className="relative w-full py-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-transparent"
       /* Safe-area padding for iPhone notch / home bar */
       style={{ paddingLeft: "max(1rem, env(safe-area-inset-left))", paddingRight: "max(1rem, env(safe-area-inset-right))" }}
     >
+      {/* Background Section Grid and Glowing Blobs */}
+      <div id="pixora-bg" className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {/* Soft gradient mesh */}
+        <div className="absolute inset-0 bg-[radial-gradient(at_top_left,rgba(219,234,254,0.25),transparent_50%),radial-gradient(at_bottom_right,rgba(236,254,255,0.3),transparent_50%)]" />
+        
+        {/* Animated glowing blobs */}
+        <motion.div
+          className="absolute top-[-10%] left-[-10%] w-[min(500px,80vw)] h-[min(500px,80vw)] rounded-full bg-blue-400/28 blur-[100px]"
+          animate={{
+            x: [0, 40, -20, 0],
+            y: [0, -30, 40, 0],
+            scale: [1, 1.1, 0.9, 1],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-[-10%] right-[-10%] w-[min(550px,90vw)] h-[min(550px,90vw)] rounded-full bg-purple-400/28 blur-[110px]"
+          animate={{
+            x: [0, -50, 30, 0],
+            y: [0, 40, -30, 0],
+            scale: [1, 0.9, 1.1, 1],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-[40%] right-[20%] w-[min(450px,70vw)] h-[min(450px,70vw)] rounded-full bg-cyan-300/28 blur-[95px]"
+          animate={{
+            x: [0, 30, -40, 0],
+            y: [0, 50, -20, 0],
+            scale: [1, 1.15, 0.85, 1],
+          }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Floating Glass Orbs and Transparent 3D Circles */}
+        {[
+          { left: "12%", top: "25%", size: 80, delay: 0, rx: [0, 360], scale: [1, 1.1, 1], bg: "from-blue-300/35 via-indigo-100/15", shadow: "shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_8px_32px_rgba(99,102,241,0.08)]" },
+          { left: "78%", top: "35%", size: 110, delay: 2.5, rx: [360, 0], scale: [1, 0.9, 1], bg: "from-purple-300/35 via-pink-100/15", shadow: "shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_8px_32px_rgba(168,85,247,0.08)]" },
+          { left: "45%", top: "68%", size: 90, delay: 4.5, rx: [0, 360], scale: [1, 1.15, 1], bg: "from-cyan-300/35 via-sky-100/15", shadow: "shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_8px_32px_rgba(6,182,212,0.08)]" }
+        ].map((orb, i) => (
+          <motion.div
+            key={`glass-orb-${i}`}
+            className={`absolute rounded-full border border-white/40 ${orb.shadow} bg-gradient-to-br ${orb.bg} to-transparent backdrop-blur-[2px] z-10`}
+            style={{ left: orb.left, top: orb.top, width: orb.size, height: orb.size }}
+            animate={{
+              y: [0, -25, 20, 0],
+              x: [0, 15, -15, 0],
+              rotate: orb.rx,
+              scale: orb.scale
+            }}
+            transition={{
+              duration: 15 + i * 2.5,
+              repeat: Infinity,
+              delay: orb.delay,
+              ease: "easeInOut"
+            }}
+          >
+            {/* Transparent 3D circle inner ring */}
+            <div className="absolute inset-2 rounded-full border border-indigo-200/20 bg-gradient-to-tr from-cyan-100/10 via-transparent to-purple-100/10" />
+            <div className="absolute top-1 left-2.5 w-2 h-2 rounded-full bg-white/45 blur-[0.5px]" />
+          </motion.div>
+        ))}
+      </div>
+
       {/* Floating particles */}
       <FloatingParticles />
 
@@ -304,7 +384,7 @@ export default function Features() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            PhotoMall gives you a complete toolkit — from secure storage to instant sharing.
+            Your photos. Your cloud. Your memories.
           </motion.p>
         </motion.div>
 

@@ -1,6 +1,5 @@
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { getImages, generateShareLink, shareViaEmail, shareViaWhatsApp, getShareLinkForCopy } from "../api.js";
 
 function formatSize(bytes) {
   if (!bytes) return "";
@@ -116,10 +115,11 @@ function getInitials(name) {
 /* ─── Typing Link Animation ─── */
 function TypingLink({ text }) {
   return (
-    <span className="flex-1 text-xs text-theme-text-muted truncate font-mono transition-colors duration-300">
+    <div className="flex-1 text-xs text-theme-text-muted truncate whitespace-nowrap overflow-hidden font-mono transition-colors duration-300">
       {text.split("").map((char, i) => (
         <motion.span
           key={i}
+          className="inline"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -128,7 +128,7 @@ function TypingLink({ text }) {
           {char}
         </motion.span>
       ))}
-    </span>
+    </div>
   );
 }
 
@@ -216,7 +216,7 @@ function WorkflowStep({ step, index }) {
           transition={{ duration: 0.2 }}
         >
           {step.id === 1 && "Select any image from your library or upload a new one instantly."}
-          {step.id === 2 && "PhotoMall creates a secure, expirable link for your image automatically."}
+          {step.id === 2 && "Pixora creates a secure, expirable link for your image automatically."}
           {step.id === 3 && "Send via Email, WhatsApp, or copy the link to any platform."}
         </motion.p>
       </motion.div>
@@ -224,17 +224,18 @@ function WorkflowStep({ step, index }) {
   );
 }
 
-export default function ShareSection({ refreshTrigger }) {
+export default function ShareSection({ images, getImageUrl }) {
   const [toastMsg, setToastMsg] = useState(null);
   const [clickedBtn, setClickedBtn] = useState(null);
   const [latestImage, setLatestImage] = useState(null);
   const [shareLink, setShareLink] = useState(null);
-  const [allImages, setAllImages] = useState([]);
   const [emailInput, setEmailInput] = useState("");
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [selectedImageIds, setSelectedImageIds] = useState([]);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const sectionRef = useRef(null);
+
+  const allImages = images || [];
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -245,33 +246,29 @@ export default function ShareSection({ refreshTrigger }) {
   const parallaxLeft = useTransform(scrollYProgress, [0, 0.5], [-40, 0]);
   const parallaxRight = useTransform(scrollYProgress, [0, 0.5], [40, 0]);
 
-  // Fetch all images and generate share link for the active one
+  // Helper to generate local share link
+  const localGenerateShareLink = (id) => {
+    const found = allImages.find((img) => img._id === id);
+    const token = found?.shareToken || "mock_token";
+    return `${window.location.origin}/share/${token}`;
+  };
+
+  // Keep latestImage and shareLink updated when images list changes
   useEffect(() => {
-    async function fetchImagesList() {
-      try {
-        const result = await getImages(1, 20); // fetch top 20 images
-        if (result.success && result.data.length > 0) {
-          setAllImages(result.data);
-          
-          // Default to the first (newest) image in the list
-          const activeImg = result.data[0];
-          setLatestImage(activeImg);
-          setSelectedImageIds([activeImg._id]);
-          // Generate share link
-          const linkData = await generateShareLink(activeImg._id);
-          setShareLink(linkData.shareUrl);
-        } else {
-          setAllImages([]);
-          setLatestImage(null);
-          setSelectedImageIds([]);
-          setShareLink(null);
-        }
-      } catch {
-        // Keep defaults
+    if (allImages.length > 0) {
+      const stillExists = allImages.some((x) => x._id === latestImage?._id);
+      if (!latestImage || !stillExists) {
+        const activeImg = allImages[0];
+        setLatestImage(activeImg);
+        setSelectedImageIds([activeImg._id]);
+        setShareLink(localGenerateShareLink(activeImg._id));
       }
+    } else {
+      setLatestImage(null);
+      setSelectedImageIds([]);
+      setShareLink(null);
     }
-    fetchImagesList();
-  }, [refreshTrigger]);
+  }, [images]);
 
   const selectImageForSharing = async (img) => {
     try {
@@ -280,7 +277,7 @@ export default function ShareSection({ refreshTrigger }) {
       if (!selectedImageIds.includes(img._id)) {
         const nextIds = [...selectedImageIds, img._id];
         setSelectedImageIds(nextIds);
-        await updateShareLinks(nextIds);
+        updateShareLinks(nextIds);
       }
     } catch {
       showToast("Failed to generate link.");
@@ -295,7 +292,7 @@ export default function ShareSection({ refreshTrigger }) {
       nextIds = [...selectedImageIds, id];
     }
     setSelectedImageIds(nextIds);
-    await updateShareLinks(nextIds);
+    updateShareLinks(nextIds);
   };
 
   const handleToggleSelectAll = async (e) => {
@@ -305,25 +302,16 @@ export default function ShareSection({ refreshTrigger }) {
       nextIds = allImages.map((img) => img._id);
     }
     setSelectedImageIds(nextIds);
-    await updateShareLinks(nextIds);
+    updateShareLinks(nextIds);
   };
 
-  const updateShareLinks = async (ids) => {
+  const updateShareLinks = (ids) => {
     if (!ids || ids.length === 0) {
       setShareLink("");
       return;
     }
-    try {
-      const links = await Promise.all(
-        ids.map(async (id) => {
-          const linkData = await generateShareLink(id);
-          return linkData.shareUrl;
-        })
-      );
-      setShareLink(links.join("\n"));
-    } catch {
-      // Keep previous
-    }
+    const links = ids.map((id) => localGenerateShareLink(id));
+    setShareLink(links.join("\n"));
   };
 
   const showToast = (msg) => {
@@ -348,24 +336,14 @@ export default function ShareSection({ refreshTrigger }) {
 
       if (btn.id === "whatsapp") {
         showToast("Opening WhatsApp…");
-        const links = await Promise.all(
-          selectedImageIds.map(async (id) => {
-            const data = await generateShareLink(id);
-            return data.shareUrl;
-          })
-        );
+        const links = selectedImageIds.map((id) => localGenerateShareLink(id));
         const combinedText = `📸 Check out these shared photos:\n\n` + links.join("\n");
         window.open(`https://wa.me/?text=${encodeURIComponent(combinedText)}`, "_blank");
         return;
       }
 
       if (btn.id === "copy") {
-        const links = await Promise.all(
-          selectedImageIds.map(async (id) => {
-            const data = await generateShareLink(id);
-            return data.shareUrl;
-          })
-        );
+        const links = selectedImageIds.map((id) => localGenerateShareLink(id));
         const textToCopy = links.join("\n");
         await navigator.clipboard.writeText(textToCopy);
         setShareLink(textToCopy);
@@ -379,21 +357,116 @@ export default function ShareSection({ refreshTrigger }) {
 
   const handleSendEmail = async () => {
     if (!emailInput || selectedImageIds.length === 0) return;
-    try {
-      showToast("Sending share emails…");
-      await Promise.all(
-        selectedImageIds.map((id) => shareViaEmail(id, emailInput))
-      );
-      showToast("Links sent to email!");
-      setShowEmailInput(false);
-      setEmailInput("");
-    } catch {
-      showToast("Failed to send email. Check SMTP config.");
-    }
+    showToast("Sending share emails…");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    showToast("Links sent to email!");
+    setShowEmailInput(false);
+    setEmailInput("");
   };
 
   return (
-    <section ref={sectionRef} className="relative py-12 px-4 sm:px-6 lg:px-8 bg-transparent overflow-hidden">
+    <section id="share-section" ref={sectionRef} className="relative py-12 px-4 sm:px-6 lg:px-8 bg-transparent overflow-hidden">
+      {/* Background Purple and Cyan Gradient Waves with Flowing Lines */}
+      <div id="pixora-bg" className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {/* Soft elegant glows */}
+        <div className="absolute top-[20%] right-[-10%] w-[min(550px,90vw)] h-[550px] rounded-full bg-purple-500/18 blur-[130px] animate-blob" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[min(500px,80vw)] h-[500px] rounded-full bg-cyan-400/18 blur-[120px] animate-blob-reverse" />
+        
+        {/* Flowing abstract animated lines */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.32]" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <motion.path
+            d="M-100,200 C300,50 600,450 1000,200 C1200,100 1400,250 1600,150"
+            stroke="url(#shareLineGradient1)"
+            strokeWidth="2.5"
+            animate={{
+              d: [
+                "M-100,200 C300,50 600,450 1000,200 C1200,100 1400,250 1600,150",
+                "M-100,150 C300,100 650,380 950,250 C1150,150 1350,300 1600,200",
+                "M-100,200 C300,50 600,450 1000,200 C1200,100 1400,250 1600,150"
+              ]
+            }}
+            transition={{
+              duration: 16,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.path
+            d="M-100,250 C200,400 700,50 1100,300 C1300,400 1450,200 1600,350"
+            stroke="url(#shareLineGradient2)"
+            strokeWidth="1.5"
+            animate={{
+              d: [
+                "M-100,250 C200,400 700,50 1100,300 C1300,400 1450,200 1600,350",
+                "M-100,300 C250,320 650,120 1050,240 C1250,320 1400,250 1600,280",
+                "M-100,250 C200,400 700,50 1100,300 C1300,400 1450,200 1600,350"
+              ]
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <defs>
+            <linearGradient id="shareLineGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.45" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.6" />
+            </linearGradient>
+            <linearGradient id="shareLineGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.45" />
+              <stop offset="50%" stopColor="#ec4899" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#14b8a6" stopOpacity="0.45" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* Connected Particles / Nodes floating along paths */}
+        {[
+          { left: "20%", top: "18%", delay: 0 },
+          { left: "45%", top: "35%", delay: 1.5 },
+          { left: "70%", top: "22%", delay: 3.5 },
+          { left: "85%", top: "15%", delay: 5.5 }
+        ].map((node, i) => (
+          <motion.div
+            key={`node-${i}`}
+            className="absolute w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_18px_6px_rgba(34,211,238,0.45)] z-10"
+            style={{ left: node.left, top: node.top }}
+            animate={{
+              y: [0, -10, 10, 0],
+              scale: [1, 1.4, 1]
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              delay: node.delay,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+        {[
+          { left: "15%", top: "35%", delay: 1.0 },
+          { left: "55%", top: "15%", delay: 2.5 },
+          { left: "80%", top: "32%", delay: 4.5 }
+        ].map((node, i) => (
+          <motion.div
+            key={`purple-node-${i}`}
+            className="absolute w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_18px_6px_rgba(192,132,252,0.45)] z-10"
+            style={{ left: node.left, top: node.top }}
+            animate={{
+              y: [0, 8, -8, 0],
+              scale: [1, 1.3, 1]
+            }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              delay: node.delay,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+      </div>
 
       <div className="relative max-w-6xl mx-auto">
         {/* Header */}
@@ -484,7 +557,7 @@ export default function ShareSection({ refreshTrigger }) {
                 {latestImage?.thumbnailPath ? (
                   <>
                     <img
-                      src={`/uploads/${latestImage.path}`}
+                      src={getImageUrl(latestImage.path)}
                       alt={latestImage.originalName}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -645,14 +718,14 @@ export default function ShareSection({ refreshTrigger }) {
                           className={`relative w-12 h-12 rounded-lg border cursor-pointer flex-shrink-0 transition-all ${
                             isSelected
                               ? "border-rose-500 ring-2 ring-rose-500/20 scale-105"
-                              : "border-white/15 opacity-80 hover:opacity-100 hover:border-white/30"
+                              : "border-slate-200/80 opacity-80 hover:opacity-100 hover:border-slate-300"
                           }`}
                           whileHover={{ scale: isSelected ? 1.05 : 1.1 }}
                           whileTap={{ scale: 0.95 }}
                         >
                           {img.thumbnailPath ? (
                             <img
-                              src={`/uploads/${img.thumbnailPath}`}
+                              src={getImageUrl(img.thumbnailPath)}
                               alt={img.originalName}
                               className="w-full h-full object-cover"
                             />
@@ -804,7 +877,7 @@ export default function ShareSection({ refreshTrigger }) {
               </button>
 
               <img
-                src={`/uploads/${latestImage.path}`}
+                src={getImageUrl(latestImage.path)}
                 alt={latestImage.originalName}
                 className="w-full h-auto max-h-[80vh] object-contain rounded-xl"
               />

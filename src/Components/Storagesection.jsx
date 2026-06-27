@@ -1,6 +1,5 @@
 import { motion, animate, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { getStorageStats } from "../api.js";
 
 function AnimatedCounter({ target, run }) {
   const [display, setDisplay] = useState(0);
@@ -79,19 +78,17 @@ function MorphingBlob({ className }) {
   );
 }
 
-export default function StorageSection({ refreshTrigger }) {
-  const [inView, setInView] = useState(false);
-  const ref = useRef(null);
-  const sectionRef = useRef(null);
-
-  // Real storage data from API
-  const [storage, setStorage] = useState({
+export default function StorageSection({ storageStats }) {
+  const storage = storageStats || {
     totalGB: 10,
     usedGB: 0,
     availableGB: 10,
     usedPercent: 0,
     fileCount: 0,
-  });
+  };
+  const [inView, setInView] = useState(false);
+  const ref = useRef(null);
+  const sectionRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -116,23 +113,6 @@ export default function StorageSection({ refreshTrigger }) {
   };
   const handleDashMouseLeave = () => { mouseX.set(0); mouseY.set(0); };
 
-  // Fetch real storage data
-  useEffect(() => {
-    async function fetchStorage() {
-      try {
-        const data = await getStorageStats();
-        setStorage(data);
-      } catch {
-        // Use defaults on error
-      }
-    }
-    fetchStorage();
-
-    // Refresh every 10 seconds
-    const interval = setInterval(fetchStorage, 10000);
-    return () => clearInterval(interval);
-  }, [refreshTrigger]);
-
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold: 0.25 });
     if (ref.current) obs.observe(ref.current);
@@ -147,10 +127,93 @@ export default function StorageSection({ refreshTrigger }) {
 
   return (
     <section
+      id="storage-section"
       ref={(el) => { ref.current = el; sectionRef.current = el; }}
       className="relative w-full py-12 overflow-hidden bg-transparent"
       style={{ paddingLeft: "max(1rem, env(safe-area-inset-left))", paddingRight: "max(1rem, env(safe-area-inset-right))" }}
     >
+      {/* Background Cloud Waves and Soft Glows */}
+      <div id="pixora-bg" className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {/* Soft glowing light streams / cloud shapes */}
+        <motion.div
+          className="absolute top-[15%] left-[5%] w-[min(650px,95vw)] h-[350px] rounded-full bg-blue-400/24 blur-[130px]"
+          animate={{
+            x: [-20, 40, -20],
+            y: [-10, 20, -10],
+            opacity: [0.7, 0.9, 0.7]
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-[10%] right-[5%] w-[min(600px,90vw)] h-[300px] rounded-full bg-indigo-400/24 blur-[120px]"
+          animate={{
+            x: [40, -30, 40],
+            y: [20, -15, 20],
+            opacity: [0.6, 0.8, 0.6]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Soft floating/moving light animation */}
+        <motion.div
+          className="absolute top-[40%] right-[30%] w-[450px] h-[300px] rounded-full bg-cyan-300/20 blur-[100px]"
+          animate={{
+            x: [0, 80, -40, 0],
+            y: [0, -60, 50, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Liquid Gradient Waves using morphed path shapes */}
+        <svg className="absolute bottom-0 left-0 w-full h-[260px] opacity-[0.24]" viewBox="0 0 1440 320" fill="none" preserveAspectRatio="none">
+          <motion.path
+            fill="url(#waveGradient1)"
+            animate={{
+              d: [
+                "M0,160 C320,300 480,100 800,240 C1120,380 1280,180 1440,220 L1440,320 L0,320 Z",
+                "M0,220 C400,100 640,320 960,180 C1280,40 1360,260 1440,160 L1440,320 L0,320 Z",
+                "M0,160 C320,300 480,100 800,240 C1120,380 1280,180 1440,220 L1440,320 L0,320 Z"
+              ]
+            }}
+            transition={{
+              duration: 18,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.path
+            fill="url(#waveGradient2)"
+            animate={{
+              d: [
+                "M0,240 C240,140 720,280 960,180 C1200,80 1320,240 1440,200 L1440,320 L0,320 Z",
+                "M0,180 C320,260 600,100 880,220 C1160,340 1320,160 1440,240 L1440,320 L0,320 Z",
+                "M0,240 C240,140 720,280 960,180 C1200,80 1320,240 1440,200 L1440,320 L0,320 Z"
+              ]
+            }}
+            transition={{
+              duration: 22,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <defs>
+            <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#2563eb" stopOpacity="0.22" />
+              <stop offset="50%" stopColor="#0891b2" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#1e3a8a" stopOpacity="0.01" />
+            </linearGradient>
+            <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.18" />
+              <stop offset="50%" stopColor="#9333ea" stopOpacity="0.10" />
+              <stop offset="100%" stopColor="#14b8a6" stopOpacity="0.01" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
 
       <div className="relative mx-auto w-full max-w-6xl">
         <div className="grid gap-10 lg:gap-14" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", alignItems: "center" }}>

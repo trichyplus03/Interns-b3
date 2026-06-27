@@ -1,6 +1,5 @@
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { useState, useRef, useCallback, useEffect } from "react";
-import { uploadImages, getImages, deleteImage } from "../api.js";
+import { useState, useRef, useCallback } from "react";
 
 // Color palette for file thumbnails
 const FILE_COLORS = [
@@ -144,11 +143,10 @@ function MagneticIcon({ isDragging, uploading }) {
   );
 }
 
-export default function UploadPreview({ onUploadSuccess }) {
+export default function UploadPreview({ images, onUpload, onDelete, getImageUrl }) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading]   = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [files, setFiles] = useState([]);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
   const sectionRef = useRef(null);
@@ -160,21 +158,8 @@ export default function UploadPreview({ onUploadSuccess }) {
 
   const parallaxY = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
-  // Fetch existing images on mount
-  useEffect(() => {
-    fetchImages();
-  }, []);
-
-  const fetchImages = async () => {
-    try {
-      const result = await getImages(1, 10);
-      if (result.success) {
-        setFiles(result.data);
-      }
-    } catch {
-      // Silently fail — show empty list
-    }
-  };
+  // Rename images prop to files internally for full compatibility with existing JSX
+  const files = images || [];
 
   const handleUpload = useCallback(async (fileList) => {
     if (!fileList || fileList.length === 0) return;
@@ -184,25 +169,17 @@ export default function UploadPreview({ onUploadSuccess }) {
     setError(null);
 
     try {
-      const filesArray = Array.from(fileList);
-      const result = await uploadImages(filesArray, (progress) => {
+      await onUpload(fileList, (progress) => {
         setUploadProgress(progress);
       });
-
-      if (result.success) {
-        // Refresh the file list
-        await fetchImages();
-        if (onUploadSuccess) onUploadSuccess();
-      }
     } catch (err) {
-      const msg = err.response?.data?.message || "Upload failed. Please try again.";
-      setError(msg);
+      setError("Upload failed. Please try again.");
       setTimeout(() => setError(null), 3000);
     } finally {
       setUploading(false);
       setUploadProgress(0);
     }
-  }, [onUploadSuccess]);
+  }, [onUpload]);
 
   const handleDragOver  = useCallback((e) => { e.preventDefault(); setIsDragging(true); }, []);
   const handleDragLeave = useCallback(() => setIsDragging(false), []);
@@ -217,24 +194,96 @@ export default function UploadPreview({ onUploadSuccess }) {
     e.target.value = ""; // reset so same file can be re-selected
   }, [handleUpload]);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteImage(id);
-      setFiles((prev) => prev.filter((f) => f._id !== id));
-      if (onUploadSuccess) onUploadSuccess();
-    } catch {
-      // Silently fail
-    }
+  const handleDelete = (id) => {
+    if (onDelete) onDelete(id);
   };
 
   const totalSize = files.reduce((sum, f) => sum + (f.size || 0), 0);
 
   return (
     <section
+      id="upload-section"
       ref={sectionRef}
       className="relative w-full py-12 overflow-hidden bg-transparent"
       style={{ paddingLeft: "max(1rem, env(safe-area-inset-left))", paddingRight: "max(1rem, env(safe-area-inset-right))" }}
     >
+      {/* Background Abstract Photo Frames and Light Gradients */}
+      <div id="pixora-bg" className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(236,72,153,0.04),transparent_60%),radial-gradient(circle_at_75%_75%,rgba(249,115,22,0.03),transparent_60%)]" />
+        
+        {/* Transparent photography cards & photo frames */}
+        {[
+          { left: "6%", top: "25%", size: "w-28 h-32", rotation: -12, delay: 0 },
+          { left: "82%", top: "15%", size: "w-32 h-36", rotation: 15, delay: 2 },
+          { left: "85%", top: "60%", size: "w-28 h-32", rotation: -8, delay: 4 },
+          { left: "8%", top: "65%", size: "w-36 h-40", rotation: 10, delay: 1 }
+        ].map((card, i) => (
+          <motion.div
+            key={`photo-card-${i}`}
+            className="hidden sm:flex absolute rounded-xl border border-slate-200/50 bg-white/30 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.02)] p-2.5 backdrop-blur-[1px] flex-col justify-between z-10"
+            style={{ left: card.left, top: card.top, width: card.size.split(" ")[0] === "w-28" ? 112 : card.size.split(" ")[0] === "w-32" ? 128 : 144, height: card.size.split(" ")[1] === "h-32" ? 128 : card.size.split(" ")[1] === "h-36" ? 144 : 160 }}
+            animate={{
+              y: [0, -18, 12, 0],
+              rotate: [card.rotation, card.rotation + 4, card.rotation - 4, card.rotation]
+            }}
+            transition={{
+              duration: 18 + i * 2,
+              delay: card.delay,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            whileHover={{ scale: 1.05, y: -25, rotate: card.rotation * 1.2 }}
+          >
+            {/* Image area */}
+            <div className="w-full h-[75%] rounded-lg bg-gradient-to-br from-pink-200/50 via-purple-100/40 to-blue-200/50 border border-white/50 flex items-center justify-center relative overflow-hidden">
+              {/* Photo shape (mountain outline) */}
+              <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            {/* Polaroid caption lines */}
+            <div className="flex flex-col gap-1 mt-2">
+              <div className="w-12 h-1.5 rounded-full bg-slate-200/60" />
+              <div className="w-8 h-1 rounded-full bg-slate-200/40" />
+            </div>
+          </motion.div>
+        ))}
+
+        {/* Small floating light particles */}
+        {Array.from({ length: 12 }).map((_, idx) => {
+          const colors = ["bg-pink-500/32", "bg-orange-500/35", "bg-purple-500/32", "bg-blue-500/35"];
+          return (
+            <motion.div
+              key={`light-particle-${idx}`}
+              className={`absolute rounded-full ${colors[idx % 4]}`}
+              style={{
+                left: `${Math.random() * 80 + 10}%`,
+                top: `${Math.random() * 80 + 10}%`,
+                width: Math.random() * 5 + 3,
+                height: Math.random() * 5 + 3
+              }}
+              animate={{
+                y: [0, -50, 0],
+                opacity: [0, 0.8, 0],
+                scale: [0.8, 1.3, 0.8]
+              }}
+              transition={{
+                duration: 7 + Math.random() * 5,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: "easeInOut"
+              }}
+            />
+          );
+        })}
+
+        {/* Camera aperture lens outline (abstract photography shape) */}
+        <div className="absolute top-[40%] left-[35%] w-[350px] h-[350px] rounded-full border border-pink-500/10 opacity-20 flex items-center justify-center">
+          <div className="w-[280px] h-[280px] rounded-full border border-dashed border-purple-500/15 flex items-center justify-center">
+            <div className="w-[180px] h-[180px] rounded-full border border-orange-500/10" />
+          </div>
+        </div>
+      </div>
 
       <div className="relative mx-auto w-full max-w-5xl">
         {/* Header */}
@@ -255,18 +304,20 @@ export default function UploadPreview({ onUploadSuccess }) {
             Uploads
           </motion.span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-theme-text leading-tight tracking-tight mb-4 transition-colors duration-300">
-            {"Upload ".split("").map((char, i) => (
-              <motion.span
-                key={`upload-${i}`}
-                className="inline-block"
-                initial={{ opacity: 0, y: 40, rotateX: -90 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
+            <span className="inline-block whitespace-nowrap">
+              {"Upload".split("").map((char, i) => (
+                <motion.span
+                  key={`upload-${i}`}
+                  className="inline-block"
+                  initial={{ opacity: 0, y: 40, rotateX: -90 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </span>{" "}
             <motion.span
               className="bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-transparent inline-block"
               initial={{ opacity: 0, y: 30, filter: "blur(10px)", scale: 0.9 }}
@@ -516,7 +567,7 @@ export default function UploadPreview({ onUploadSuccess }) {
                       {/* Thumbnail or initials */}
                       {file.thumbnailPath ? (
                         <img
-                          src={`/uploads/${file.thumbnailPath}`}
+                          src={getImageUrl(file.thumbnailPath)}
                           alt={file.originalName}
                           className="flex-shrink-0 w-9 h-9 rounded-lg object-cover shadow-md"
                         />
@@ -580,7 +631,7 @@ export default function UploadPreview({ onUploadSuccess }) {
                       title={file.originalName}
                     >
                       {file.thumbnailPath ? (
-                        <img src={`/uploads/${file.thumbnailPath}`} alt="" className="w-full h-full object-cover" />
+                        <img src={getImageUrl(file.thumbnailPath)} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <div className={`w-full h-full bg-gradient-to-br ${getFileColor(i)} flex items-center justify-center text-white text-[9px] font-bold`}>
                           {getInitials(file.originalName)}
