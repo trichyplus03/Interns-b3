@@ -8,6 +8,10 @@ import Features from "./Components/Features";
 import StorageSection from "./Components/Storagesection";
 import UploadPreview from "./Components/Uploadpreview";
 import ShareSection from "./Components/Sharesection";
+import Pricing from "./Components/Pricing";
+import Testimonials from "./Components/Testimonials";
+import FAQ from "./Components/FAQ";
+import CTA from "./Components/CTA";
 
 // In-memory cache for Blob Object URLs created in the current tab session
 const sessionObjectUrls = new Map();
@@ -223,11 +227,23 @@ export default function App() {
           </div>
         </section>
 
-        {/* Placeholders for pricing, faq, contact */}
-        <section id="pricing" />
-        
-        <section id="faq" />
+        {/* 6. Pricing Section */}
+        <section id="pricing">
+          <Pricing />
+        </section>
 
+        {/* 7. Testimonials Section */}
+        <Testimonials />
+
+        {/* 8. FAQ Section */}
+        <section id="faq">
+          <FAQ />
+        </section>
+
+        {/* 9. CTA Section */}
+        <CTA />
+
+        {/* 10. Contact Section */}
         <section id="contact">
           <Contact />
         </section>
