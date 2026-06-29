@@ -1,6 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+:root {
+  /* Premium Professional Light Theme Variables */
+  --bg-main: #f8fafc; /* Clean, professional slate-50 */
+  --bg-section-alt: #f1f5f9; /* Slate-100 for alternate sections */
+  --card-bg: #ffffff; /* Solid crisp white cards */
+  --card-hover-bg: #ffffff;
+  --card-border: #e2e8f0; /* Crisp slate-200 borders */
+  --card-hover-border: #cbd5e1; /* Slate-300 borders on hover */
+  --text-primary: #0f172a; /* Deep slate-900 */
+  --text-secondary: #475569; /* Slate-600 secondary text */
+  --text-muted: #94a3b8; /* Slate-400 muted text */
+  --grid-opacity: 0.02;
+  --glow-opacity-mul: 0.3;
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02); /* Professional micro-border shadow */
+  --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  --glass-shimmer: rgba(255, 255, 255, 0.4);
+  --progress-bg: rgba(99, 102, 241, 0.05);
+}
+
 @theme {
   --color-background: #F8FAFC;
   --color-primary: #4F46E5;
@@ -8,6 +27,52 @@
   --color-accent: #06B6D4;
   --color-text: #0F172A;
   --color-border: #E2E8F0;
+
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --color-theme-bg: var(--bg-main);
+  --color-theme-bg-alt: var(--bg-section-alt);
+  --color-theme-card: var(--card-bg);
+  --color-theme-card-hover: var(--card-hover-bg);
+  --color-theme-border: var(--card-border);
+  --color-theme-border-hover: var(--card-hover-border);
+  --color-theme-text: var(--text-primary);
+  --color-theme-text-muted: var(--text-secondary);
+  --color-theme-text-faint: var(--text-muted);
+  
+  --shadow-theme-card: var(--card-shadow);
+  --shadow-theme-card-hover: var(--card-hover-shadow);
+
+  --animate-blob: blob 16s infinite ease-in-out;
+  --animate-blob-reverse: blob-reverse 20s infinite ease-in-out;
+  --animate-marching-ants: marching-ants 0.8s linear infinite;
+
+  @keyframes blob {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(120px, -80px) scale(1.12);
+    }
+    66% {
+      transform: translate(-60px, 80px) scale(0.92);
+    }
+  }
+  @keyframes blob-reverse {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(-100px, 120px) scale(0.88);
+    }
+  }
+  @keyframes marching-ants {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 12;
+    }
+  }
 }
 
 html {
@@ -20,4 +85,12 @@ body {
   color: #0F172A;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@utility scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  &::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
 }
