@@ -8,6 +8,7 @@ const navLinks = [
   { label: 'Storage', href: '#storage' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'FAQ', href: '#faq' },
+  { label: 'Contact', href: '#contact' },
 ]
 
 const Navbar = () => {
@@ -23,13 +24,23 @@ const Navbar = () => {
         ([entry]) => {
           if (entry.isIntersecting) setActiveSection(id)
         },
-        { rootMargin: '-40% 0px -50% 0px', threshold: 0 }
+        { rootMargin: '-20% 0px -50% 0px', threshold: 0.1 }
       )
       observer.observe(el)
       return observer
     })
 
-    return () => observers.forEach((obs) => obs?.disconnect())
+    // Clear active state when scrolled to top (hero area)
+    const handleScroll = () => {
+      if (window.scrollY < 300) setActiveSection('')
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+
+    return () => {
+      observers.forEach((obs) => obs?.disconnect())
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   const handleScroll = (e, href) => {

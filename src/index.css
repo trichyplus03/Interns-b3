@@ -45,6 +45,8 @@
   --animate-blob: blob 16s infinite ease-in-out;
   --animate-blob-reverse: blob-reverse 20s infinite ease-in-out;
   --animate-marching-ants: marching-ants 0.8s linear infinite;
+  --animate-glow-float: glow-float 14s infinite ease-in-out;
+  --animate-glow-float-reverse: glow-float-reverse 12s infinite ease-in-out;
 
   @keyframes blob {
     0%, 100% {
@@ -71,6 +73,25 @@
     }
     100% {
       stroke-dashoffset: 12;
+    }
+  }
+  @keyframes glow-float {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(30px, -20px) scale(1.05);
+    }
+    66% {
+      transform: translate(-15px, 15px) scale(0.97);
+    }
+  }
+  @keyframes glow-float-reverse {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(-25px, 20px) scale(1.06);
     }
   }
 }

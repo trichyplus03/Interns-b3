@@ -61,15 +61,83 @@ const FloatingCard = ({ children, className, delay = 0 }) => (
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#4F46E5]/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#06B6D4]/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#7C3AED]/5 rounded-full blur-3xl" />
+    <section
+      className="relative min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      style={{
+        background: `radial-gradient(circle at top left, rgba(139,92,246,0.12), transparent 40%), #FAFAFC`,
+      }}
+    >
+      {/* Box grid background */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(139,92,246,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.08) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+          maskImage: 'radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 100%)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Animated accent squares scattered on the grid */}
+      <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+        {/* Filled purple squares — fade in + pulse */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: [0, 1, 0.5, 1], scale: [0.8, 1, 1.05, 1] }}
+          transition={{ duration: 3, delay: 0.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[144px] left-[96px] rounded-sm bg-[rgba(139,92,246,0.18)]"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: [0, 0.8, 0.4, 0.8], scale: 1 }}
+          transition={{ duration: 4, delay: 1.2, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[288px] right-[192px] rounded-sm bg-[rgba(139,92,246,0.15)]"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.7, 0.3, 0.7] }}
+          transition={{ duration: 5, delay: 0.8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[96px] right-[336px] rounded-sm bg-[rgba(6,182,212,0.18)]"
+        />
+
+        {/* Gradient-filled squares — fade in + gentle scale breathe */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: [1, 1.08, 1] }}
+          transition={{ duration: 6, delay: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[384px] left-[240px] rounded-sm bg-gradient-to-br from-[rgba(139,92,246,0.22)] to-[rgba(6,182,212,0.18)]"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: [1, 1.1, 1] }}
+          transition={{ duration: 5, delay: 2, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[192px] right-[480px] rounded-sm bg-gradient-to-br from-[rgba(6,182,212,0.2)] to-[rgba(139,92,246,0.15)]"
+        />
+
+        {/* Border-only accent squares — fade in + opacity pulse */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0.4, 1] }}
+          transition={{ duration: 4, delay: 0.3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[240px] left-[432px] rounded-sm border-2 border-[rgba(139,92,246,0.25)]"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.9, 0.3, 0.9] }}
+          transition={{ duration: 5, delay: 1.8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[480px] right-[384px] rounded-sm border-2 border-[rgba(6,182,212,0.25)]"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.8, 0.2, 0.8] }}
+          transition={{ duration: 6, delay: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute w-[48px] h-[48px] top-[336px] left-[48px] rounded-sm border-2 border-[rgba(139,92,246,0.2)]"
+        />
       </div>
 
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="relative z-[1] max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         {/* Left Column */}
         <motion.div
           variants={containerVariants}

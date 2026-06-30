@@ -4,9 +4,9 @@ const brands = [
   {
     name: 'Adobe',
     svg: (
-      <svg viewBox="0 0 120 32" fill="currentColor" className="h-7 w-auto">
-        <path d="M16 4L4 28h6.5l2.2-5.5h11L26.5 28H33L21 4H16zm-1.5 14.5L19 10.5 23.5 18.5H14.5z" />
-        <text x="38" y="23" fontSize="14" fontWeight="700" fontFamily="system-ui">
+      <svg viewBox="0 0 130 34" className="h-8 w-auto">
+        <path d="M18 2L2 32h8.5l3-7.5h13L29.5 32H38L22 2H18zm-1 17.5L22 9l5 10.5H17z" fill="#FF0000" />
+        <text x="44" y="25" fontSize="16" fontWeight="700" fontFamily="system-ui" fill="#FF0000">
           Adobe
         </text>
       </svg>
@@ -15,9 +15,12 @@ const brands = [
   {
     name: 'Canva',
     svg: (
-      <svg viewBox="0 0 100 32" fill="currentColor" className="h-7 w-auto">
-        <circle cx="16" cy="16" r="12" fillOpacity="0.3" />
-        <text x="34" y="22" fontSize="15" fontWeight="700" fontFamily="system-ui">
+      <svg viewBox="0 0 110 34" className="h-8 w-auto">
+        <circle cx="17" cy="17" r="14" fill="#00C4CC" />
+        <text x="12" y="22" fontSize="14" fontWeight="800" fontFamily="system-ui" fill="#FFFFFF">
+          C
+        </text>
+        <text x="36" y="25" fontSize="16" fontWeight="700" fontFamily="system-ui" fill="#7D2AE8">
           Canva
         </text>
       </svg>
@@ -26,11 +29,13 @@ const brands = [
   {
     name: 'Figma',
     svg: (
-      <svg viewBox="0 0 100 32" fill="currentColor" className="h-7 w-auto">
-        <rect x="4" y="4" width="10" height="10" rx="5" fillOpacity="0.5" />
-        <rect x="4" y="18" width="10" height="10" rx="5" fillOpacity="0.4" />
-        <rect x="18" y="11" width="10" height="10" rx="5" fillOpacity="0.6" />
-        <text x="34" y="22" fontSize="15" fontWeight="700" fontFamily="system-ui">
+      <svg viewBox="0 0 110 34" className="h-8 w-auto">
+        <rect x="3" y="1" width="11" height="11" rx="5.5" fill="#F24E1E" />
+        <rect x="17" y="1" width="11" height="11" rx="5.5" fill="#FF7262" />
+        <rect x="3" y="12" width="11" height="11" rx="5.5" fill="#A259FF" />
+        <rect x="17" y="12" width="11" height="11" rx="5.5" fill="#1ABCFE" />
+        <rect x="3" y="23" width="11" height="11" rx="5.5" fill="#0ACF83" />
+        <text x="34" y="25" fontSize="16" fontWeight="700" fontFamily="system-ui" fill="#333333">
           Figma
         </text>
       </svg>
@@ -39,9 +44,9 @@ const brands = [
   {
     name: 'Unsplash',
     svg: (
-      <svg viewBox="0 0 120 32" fill="currentColor" className="h-7 w-auto">
-        <rect x="4" y="8" width="16" height="16" rx="2" fillOpacity="0.4" />
-        <text x="26" y="22" fontSize="13" fontWeight="700" fontFamily="system-ui">
+      <svg viewBox="0 0 140 34" className="h-8 w-auto">
+        <path d="M10 12h12v14H2V12h8zm0-10h12v8H10V2z" fill="#111111" />
+        <text x="30" y="25" fontSize="15" fontWeight="700" fontFamily="system-ui" fill="#111111">
           Unsplash
         </text>
       </svg>
@@ -50,9 +55,12 @@ const brands = [
   {
     name: 'Pexels',
     svg: (
-      <svg viewBox="0 0 100 32" fill="currentColor" className="h-7 w-auto">
-        <polygon points="4,28 4,4 20,16" fillOpacity="0.5" />
-        <text x="26" y="22" fontSize="14" fontWeight="700" fontFamily="system-ui">
+      <svg viewBox="0 0 120 34" className="h-8 w-auto">
+        <rect x="2" y="2" width="24" height="30" rx="4" fill="#05A081" />
+        <text x="9" y="24" fontSize="16" fontWeight="800" fontFamily="system-ui" fill="#FFFFFF">
+          P
+        </text>
+        <text x="32" y="25" fontSize="16" fontWeight="700" fontFamily="system-ui" fill="#05A081">
           Pexels
         </text>
       </svg>
@@ -86,10 +94,10 @@ const TrustedBy = () => {
                 delay: index * 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.08, y: -2 }}
               className="group cursor-default"
             >
-              <div className="text-[#94A3B8] grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:text-[#4F46E5] transition-all duration-500">
+              <div className="opacity-80 group-hover:opacity-100 transition-all duration-300">
                 {brand.svg}
               </div>
             </motion.div>
