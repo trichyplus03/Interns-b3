@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useSpring, useTransform, useScroll, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useRef } from "react";
 
 const features = [
   {
@@ -48,34 +48,8 @@ const features = [
   },
 ];
 
-/* ─── 3D Tilt Card ─── */
-function TiltCard({ f, index }) {
-  const cardRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [12, -12]), { stiffness: 300, damping: 30 });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-12, 12]), { stiffness: 300, damping: 30 });
-  const glowX = useSpring(useTransform(mouseX, [-0.5, 0.5], [0, 100]), { stiffness: 300, damping: 30 });
-  const glowY = useSpring(useTransform(mouseY, [-0.5, 0.5], [0, 100]), { stiffness: 300, damping: 30 });
-
-  const handleMouseMove = (e) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-    setIsHovered(false);
-  };
-
+/* ─── Feature Card ─── */
+function FeatureCard({ f }) {
   const handleCardClick = () => {
     let targetId = "";
     if (f.id === 1) targetId = "storage-section";
@@ -91,103 +65,40 @@ function TiltCard({ f, index }) {
   };
 
   return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 60, rotateX: -15 }}
-      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.7, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
+    <div
       onClick={handleCardClick}
-      style={{
-        rotateX,
-        rotateY,
-        transformStyle: "preserve-3d",
-        perspective: 800,
-      }}
-      className="group relative flex flex-col rounded-2xl border border-theme-border bg-theme-card hover:border-theme-border-hover hover:bg-theme-card-hover backdrop-blur-xl p-6 shadow-theme-card hover:shadow-theme-card-hover hover:-translate-y-1.5 hover:scale-[1.01] overflow-hidden cursor-pointer transition-all duration-300 ease-out"
+      className="group relative flex flex-col rounded-2xl border border-theme-border bg-theme-card hover:border-theme-border-hover hover:bg-theme-card-hover backdrop-blur-xl p-6 shadow-theme-card overflow-hidden cursor-pointer transition-all duration-300 ease-out"
     >
-      {/* Animated glow that follows cursor */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
-          background: useTransform(
-            [glowX, glowY],
-            ([x, y]) => `radial-gradient(circle at ${x}% ${y}%, ${f.glowColor}, transparent 60%)`
-          ),
-        }}
+      {/* Top accent line */}
+      <div
+        className={`absolute inset-x-0 top-0 h-[2px] ${f.topLine} origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out`}
       />
 
-      {/* Top accent line with animated width */}
-      <motion.div
-        className={`absolute inset-x-0 top-0 h-[2px] ${f.topLine}`}
-        initial={{ scaleX: 0, originX: 0 }}
-        whileInView={{ scaleX: isHovered ? 1 : 0 }}
-        animate={{ scaleX: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      />
-
-      {/* Animated border shimmer */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 rounded-2xl"
-        style={{
-          background: `linear-gradient(var(--shimmer-angle, 0deg), transparent 40%, var(--glass-shimmer) 50%, transparent 60%)`,
-        }}
-        animate={{ "--shimmer-angle": ["0deg", "360deg"] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-      />
-
-      {/* Icon with magnetic hover + pulse ring */}
-      <motion.div
-        className="relative mb-5 inline-flex"
-        style={{ transformStyle: "preserve-3d", translateZ: isHovered ? 30 : 0 }}
-        whileHover={{ scale: 1.15 }}
-        transition={{ type: "spring", stiffness: 400, damping: 15 }}
-      >
+      {/* Icon */}
+      <div className="relative mb-5 inline-flex">
         <div className={`w-11 h-11 items-center justify-center rounded-xl bg-gradient-to-br ${f.accent} text-white shadow-md flex-shrink-0 flex relative z-10`}>
           {f.icon}
         </div>
-        {/* Pulse ring on hover */}
-        <motion.div
-          className={`absolute inset-0 rounded-xl bg-gradient-to-br ${f.accent}`}
-          animate={isHovered ? {
-            scale: [1, 1.6, 1.8],
-            opacity: [0.4, 0.1, 0],
-          } : { scale: 1, opacity: 0 }}
-          transition={{ duration: 1.2, repeat: isHovered ? Infinity : 0, ease: "easeOut" }}
-        />
-      </motion.div>
+      </div>
 
-      {/* Title with reveal */}
-      <motion.h3
-        className="text-sm font-semibold text-theme-text mb-2 leading-snug transition-colors duration-300"
-        style={{ transformStyle: "preserve-3d", translateZ: isHovered ? 20 : 0 }}
-      >
+      {/* Title */}
+      <h3 className="text-sm font-semibold text-theme-text mb-2 leading-snug transition-colors duration-300">
         {f.title}
-      </motion.h3>
+      </h3>
 
       {/* Description */}
-      <motion.p
-        className="text-sm text-theme-text-muted leading-relaxed flex-1 transition-colors duration-300"
-        style={{ transformStyle: "preserve-3d", translateZ: isHovered ? 10 : 0 }}
-      >
+      <p className="text-sm text-theme-text-muted leading-relaxed flex-1 transition-colors duration-300">
         {f.description}
-      </motion.p>
+      </p>
 
-      {/* Badge with spring pop */}
-      <motion.span
-        className={`mt-5 self-start text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full border ${f.badgeColor} transition-colors duration-300`}
-        whileHover={{ scale: 1.1, y: -2 }}
-        transition={{ type: "spring", stiffness: 400, damping: 12 }}
-        style={{ transformStyle: "preserve-3d", translateZ: isHovered ? 25 : 0 }}
-      >
+      {/* Badge */}
+      <span className={`mt-5 self-start text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full border ${f.badgeColor} transition-colors duration-300`}>
         {f.badge}
-      </motion.span>
-    </motion.div>
+      </span>
+    </div>
   );
 }
+
 
 /* ─── Animated Text Reveal ─── */
 function AnimatedHeading({ text, gradient }) {
@@ -259,13 +170,6 @@ function FloatingParticles() {
 
 export default function Features() {
   const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-  const gridRotate = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0, 0]);
 
   return (
     <section
@@ -388,19 +292,17 @@ export default function Features() {
           </motion.p>
         </motion.div>
 
-        {/* Grid with perspective */}
-        <motion.div
+        {/* Grid */}
+        <div
           className="grid gap-4"
           style={{
             gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
-            perspective: 1200,
-            rotate: gridRotate,
           }}
         >
-          {features.map((f, i) => (
-            <TiltCard key={f.id} f={f} index={i} />
+          {features.map((f) => (
+            <FeatureCard key={f.id} f={f} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

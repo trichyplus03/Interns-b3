@@ -95,8 +95,6 @@ export default function StorageSection({ storageStats }) {
     offset: ["start end", "end start"],
   });
 
-  const leftX = useTransform(scrollYProgress, [0, 0.4], [-60, 0]);
-  const rightX = useTransform(scrollYProgress, [0, 0.4], [60, 0]);
   const fadeIn = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
 
   const mouseX = useMotionValue(0);
@@ -219,7 +217,7 @@ export default function StorageSection({ storageStats }) {
         <div className="grid gap-10 lg:gap-14" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", alignItems: "center" }}>
 
           {/* Left copy */}
-          <motion.div style={{ x: leftX, opacity: fadeIn }}>
+          <motion.div style={{ opacity: fadeIn }}>
             <motion.span
               className="inline-block mb-4 px-3 py-1 text-[11px] font-semibold tracking-widest uppercase rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
               initial={{ opacity: 0, scale: 0.8, x: -20 }}
@@ -302,7 +300,7 @@ export default function StorageSection({ storageStats }) {
           </motion.div>
 
           {/* Right dashboard — 3D tilt */}
-          <motion.div style={{ x: rightX, opacity: fadeIn }}>
+          <motion.div style={{ opacity: fadeIn }}>
             <motion.div
               ref={cardRef}
               onMouseMove={handleDashMouseMove}
