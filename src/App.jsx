@@ -7,7 +7,7 @@ import "./App.css";
 
 function App() {
   return (
-    <div>
+    <div className="min-h-screen bg-green-50">
       <Pricing />
       <Testimonials />
       <FAQ />
@@ -15,5 +15,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
