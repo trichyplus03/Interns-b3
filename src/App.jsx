@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
+import Navbar from './Components/Navbar'
+import Hero from './Components/Hero'
+import TrustedBy from './Components/TrustedBy'
+import Footer from './Components/Footer'
+import Contact from './Components/Contact'
 import Features from "./Components/Features";
 import StorageSection from "./Components/Storagesection";
 import UploadPreview from "./Components/Uploadpreview";
 import ShareSection from "./Components/Sharesection";
+import Pricing from "./Components/Pricing";
+import Testimonials from "./Components/Testimonials";
+import FAQ from "./Components/FAQ";
+import CTA from "./Components/CTA";
 
 // In-memory cache for Blob Object URLs created in the current tab session
 const sessionObjectUrls = new Map();
@@ -183,43 +192,63 @@ export default function App() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fcfdff] text-theme-text font-sans antialiased relative overflow-hidden transition-colors duration-300">
-      {/* Subtle modern engineering line grid overlay */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px)
-          `,
-          backgroundSize: "64px 64px",
-          maskImage: "radial-gradient(circle at 50% 30%, black 75%, transparent 100%)",
-          WebkitMaskImage: "radial-gradient(circle at 50% 30%, black 75%, transparent 100%)"
-        }}
-      />
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased">
+      <Navbar />
+      <main>
+        {/* 1. Hero Section */}
+        <Hero />
+        
+        {/* 2. Trusted By Section */}
+        <TrustedBy />
 
-      <div className="relative z-10">
-        {/* 1 ─ Feature grid */}
-        <Features />
+        {/* 3. Features Section */}
+        <section id="features">
+          <Features />
+        </section>
 
-        {/* 2 ─ Storage dashboard */}
-        <StorageSection storageStats={storageStats} />
+        {/* 4. Storage Section */}
+        <section id="storage">
+          <StorageSection storageStats={storageStats} />
+        </section>
 
-        {/* 3 ─ Drag-and-drop upload preview */}
-        <UploadPreview 
-          images={images} 
-          onUpload={handleUpload} 
-          onDelete={handleDelete} 
-          getImageUrl={getImageUrl} 
-        />
+        {/* 5. Upload & Share Workspace */}
+        <section id="workspace" className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <UploadPreview 
+              images={images} 
+              onUpload={handleUpload} 
+              onDelete={handleDelete} 
+              getImageUrl={getImageUrl} 
+            />
+            <ShareSection 
+              images={images} 
+              getImageUrl={getImageUrl} 
+            />
+          </div>
+        </section>
 
-        {/* 4 ─ Image sharing (Email / WhatsApp / Copy Link) */}
-        <ShareSection 
-          images={images} 
-          getImageUrl={getImageUrl} 
-        />
-      </div>
-    </main>
+        {/* 6. Pricing Section */}
+        <section id="pricing">
+          <Pricing />
+        </section>
+
+        {/* 7. Testimonials Section */}
+        <Testimonials />
+
+        {/* 8. FAQ Section */}
+        <section id="faq">
+          <FAQ />
+        </section>
+
+        {/* 9. CTA Section */}
+        <CTA />
+
+        {/* 10. Contact Section */}
+        <section id="contact">
+          <Contact />
+        </section>
+      </main>
+      <Footer />
+    </div>
   );
-}
+}
