@@ -53,7 +53,7 @@ export default function UploadPreview() {
     >
       {/* Background Abstract Photo Frames and Light Gradients */}
       <div id="pixora-bg" className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(236,72,153,0.04),transparent_60%),radial-gradient(circle_at_75%_75%,rgba(249,115,22,0.03),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(236,72,153,0.12),transparent_60%),radial-gradient(circle_at_75%_75%,rgba(249,115,22,0.1),transparent_60%)]" />
         
         {/* Transparent photography cards & photo frames */}
         {[
@@ -126,9 +126,9 @@ export default function UploadPreview() {
         })}
 
         {/* Camera aperture lens outline (abstract photography shape) */}
-        <div className="absolute top-[40%] left-[35%] w-[350px] h-[350px] rounded-full border border-pink-500/10 opacity-20 flex items-center justify-center">
-          <div className="w-[280px] h-[280px] rounded-full border border-dashed border-purple-500/15 flex items-center justify-center">
-            <div className="w-[180px] h-[180px] rounded-full border border-orange-500/10" />
+        <div className="absolute top-[30%] sm:top-[40%] left-1/2 sm:left-[35%] -translate-x-1/2 sm:translate-x-0 w-[280px] h-[280px] sm:w-[350px] sm:h-[350px] rounded-full border border-pink-500/10 opacity-20 flex items-center justify-center">
+          <div className="w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] rounded-full border border-dashed border-purple-500/15 flex items-center justify-center">
+            <div className="w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] rounded-full border border-orange-500/10" />
           </div>
         </div>
       </div>
