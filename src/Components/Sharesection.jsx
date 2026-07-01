@@ -82,24 +82,28 @@ const WORKFLOW_STEPS = [
 
 export default function ShareSection() {
   return (
-    <section id="share-section" className="relative py-12 px-4 sm:px-6 lg:px-8 bg-transparent overflow-hidden">
+    <section
+      id="share-section"
+      className="relative w-full py-12 px-4 sm:px-6 lg:px-8 bg-transparent overflow-hidden"
+      style={{ paddingLeft: "max(1rem, env(safe-area-inset-left))", paddingRight: "max(1rem, env(safe-area-inset-right))" }}
+    >
       {/* Background Purple and Cyan Gradient Waves with Flowing Lines */}
       <div id="pixora-bg" className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         {/* Soft elegant glows */}
-        <div className="absolute top-[20%] right-[-10%] w-[min(550px,90vw)] h-[550px] rounded-full bg-purple-500/18 blur-[130px]" />
-        <div className="absolute bottom-[10%] left-[-10%] w-[min(500px,80vw)] h-[500px] rounded-full bg-cyan-400/18 blur-[120px]" />
+        <div className="absolute top-[20%] right-[-10%] w-[min(550px,90vw)] h-[550px] rounded-full bg-purple-500/22 blur-[130px]" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[min(500px,80vw)] h-[500px] rounded-full bg-cyan-400/20 blur-[120px]" />
         
         {/* Flowing abstract animated lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.32]" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 w-full h-full opacity-[0.2]" viewBox="0 0 1700 500" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <motion.path
-            d="M-100,200 C300,50 600,450 1000,200 C1200,100 1400,250 1600,150"
+            d="M0,200 C400,50 700,450 1100,200 C1300,100 1500,250 1700,150"
             stroke="url(#shareLineGradient1)"
             strokeWidth="2.5"
             animate={{
               d: [
-                "M-100,200 C300,50 600,450 1000,200 C1200,100 1400,250 1600,150",
-                "M-100,150 C300,100 650,380 950,250 C1150,150 1350,300 1600,200",
-                "M-100,200 C300,50 600,450 1000,200 C1200,100 1400,250 1600,150"
+                "M0,200 C400,50 700,450 1100,200 C1300,100 1500,250 1700,150",
+                "M0,150 C400,100 750,380 1050,250 C1250,150 1450,300 1700,200",
+                "M0,200 C400,50 700,450 1100,200 C1300,100 1500,250 1700,150"
               ]
             }}
             transition={{
@@ -109,14 +113,14 @@ export default function ShareSection() {
             }}
           />
           <motion.path
-            d="M-100,250 C200,400 700,50 1100,300 C1300,400 1450,200 1600,350"
+            d="M0,250 C300,400 800,50 1200,300 C1400,400 1550,200 1700,350"
             stroke="url(#shareLineGradient2)"
             strokeWidth="1.5"
             animate={{
               d: [
-                "M-100,250 C200,400 700,50 1100,300 C1300,400 1450,200 1600,350",
-                "M-100,300 C250,320 650,120 1050,240 C1250,320 1400,250 1600,280",
-                "M-100,250 C200,400 700,50 1100,300 C1300,400 1450,200 1600,350"
+                "M0,250 C300,400 800,50 1200,300 C1400,400 1550,200 1700,350",
+                "M0,300 C350,320 750,120 1150,240 C1350,320 1500,250 1700,280",
+                "M0,250 C300,400 800,50 1200,300 C1400,400 1550,200 1700,350"
               ]
             }}
             transition={{
@@ -148,7 +152,7 @@ export default function ShareSection() {
         ].map((node, i) => (
           <motion.div
             key={`node-${i}`}
-            className="absolute w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_18px_6px_rgba(34,211,238,0.45)] z-10"
+            className="absolute w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_12px_4px_rgba(34,211,238,0.25)] opacity-50 z-10"
             style={{ left: node.left, top: node.top }}
             animate={{
               y: [0, -10, 10, 0],
