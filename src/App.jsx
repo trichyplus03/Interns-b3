@@ -192,11 +192,63 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-green-50">
-      <Pricing />
-      <Testimonials />
-      <FAQ />
-      <CTA />
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased">
+      <Navbar />
+      <main>
+        {/* 1. Hero Section */}
+        <Hero />
+        
+        {/* 2. Trusted By Section */}
+        <TrustedBy />
+
+        {/* 3. Features Section */}
+        <section id="features">
+          <Features />
+        </section>
+
+        {/* 4. Storage Section */}
+        <section id="storage">
+          <StorageSection storageStats={storageStats} />
+        </section>
+
+        {/* 5. Upload & Share Workspace */}
+        <section id="workspace" className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <UploadPreview 
+              images={images} 
+              onUpload={handleUpload} 
+              onDelete={handleDelete} 
+              getImageUrl={getImageUrl} 
+            />
+            <ShareSection 
+              images={images} 
+              getImageUrl={getImageUrl} 
+            />
+          </div>
+        </section>
+
+        {/* 6. Pricing Section */}
+        <section id="pricing">
+          <Pricing />
+        </section>
+
+        {/* 7. Testimonials Section */}
+        <Testimonials />
+
+        {/* 8. FAQ Section */}
+        <section id="faq">
+          <FAQ />
+        </section>
+
+        {/* 9. CTA Section */}
+        <CTA />
+
+        {/* 10. Contact Section */}
+        <section id="contact">
+          <Contact />
+        </section>
+      </main>
+      <Footer />
     </div>
   );
 }
