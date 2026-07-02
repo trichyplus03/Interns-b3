@@ -58,7 +58,7 @@ export default function CTA() {
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
           viewport={{ once: true }}
-          className="grid grid-cols-3 gap-8 mt-16"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-16"
         >
           <div>
             <h3 className="text-3xl font-bold">50K+</h3>

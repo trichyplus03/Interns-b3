@@ -54,6 +54,40 @@ const itemVariants = {
   },
 }
 
+const headerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.12, delayChildren: 0.05 },
+  },
+}
+
+const headerItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const formContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.15 },
+  },
+}
+
+const formItemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -100,28 +134,39 @@ const Contact = () => {
       <div className="relative max-w-6xl mx-auto">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-16"
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center mb-16 flex flex-col items-center"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E2E8F0] shadow-sm mb-6">
+          <motion.div
+            variants={headerItemVariants}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E2E8F0] shadow-sm mb-6"
+          >
             <Mail className="w-4 h-4 text-[#4F46E5]" />
             <span className="text-sm font-medium text-[#64748B]">
               Get in Touch
             </span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0F172A] leading-tight tracking-tight">
+          </motion.div>
+
+          <motion.h2
+            variants={headerItemVariants}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0F172A] leading-tight tracking-tight"
+          >
             We'd Love to{' '}
             <span className="bg-gradient-to-r from-[#4F46E5] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
               Hear from You
             </span>
-          </h2>
-          <p className="mt-4 text-lg text-[#64748B] max-w-2xl mx-auto leading-relaxed">
+          </motion.h2>
+
+          <motion.p
+            variants={headerItemVariants}
+            className="mt-4 text-lg text-[#64748B] max-w-2xl mx-auto leading-relaxed"
+          >
             Have a question, feedback, or partnership idea? Drop us a message
             and our team will get back to you as soon as possible.
-          </p>
+          </motion.p>
         </motion.div>
 
         <div className="grid lg:grid-cols-5 gap-10 lg:gap-14">
@@ -197,10 +242,10 @@ const Contact = () => {
 
           {/* Right Column — Contact Form */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={formContainerVariants}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-3"
           >
             <div className="relative p-7 sm:p-9 rounded-3xl bg-white border border-[#E2E8F0] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
@@ -227,7 +272,7 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid sm:grid-cols-2 gap-5">
                   {/* Name */}
-                  <div className="relative">
+                  <motion.div variants={formItemVariants} className="relative">
                     <label
                       htmlFor="contact-name"
                       className="block text-sm font-medium text-[#0F172A] mb-2"
@@ -250,10 +295,10 @@ const Contact = () => {
                           : 'border-[#E2E8F0] hover:border-[#CBD5E1]'
                       }`}
                     />
-                  </div>
+                  </motion.div>
 
                   {/* Email */}
-                  <div className="relative">
+                  <motion.div variants={formItemVariants} className="relative">
                     <label
                       htmlFor="contact-email"
                       className="block text-sm font-medium text-[#0F172A] mb-2"
@@ -276,11 +321,11 @@ const Contact = () => {
                           : 'border-[#E2E8F0] hover:border-[#CBD5E1]'
                       }`}
                     />
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Subject */}
-                <div>
+                <motion.div variants={formItemVariants}>
                   <label
                     htmlFor="contact-subject"
                     className="block text-sm font-medium text-[#0F172A] mb-2"
@@ -303,10 +348,10 @@ const Contact = () => {
                         : 'border-[#E2E8F0] hover:border-[#CBD5E1]'
                     }`}
                   />
-                </div>
+                </motion.div>
 
                 {/* Message */}
-                <div>
+                <motion.div variants={formItemVariants}>
                   <label
                     htmlFor="contact-message"
                     className="block text-sm font-medium text-[#0F172A] mb-2"
@@ -329,10 +374,10 @@ const Contact = () => {
                         : 'border-[#E2E8F0] hover:border-[#CBD5E1]'
                     }`}
                   />
-                </div>
+                </motion.div>
 
                 {/* Submit Button */}
-                <div className="flex items-center justify-between gap-4 pt-2">
+                <motion.div variants={formItemVariants} className="flex items-center justify-between gap-4 pt-2">
                   <p className="text-xs text-[#94A3B8] hidden sm:block">
                     We typically respond within 24 hours.
                   </p>
@@ -346,7 +391,7 @@ const Contact = () => {
                     Send Message
                     <ArrowRight className="w-4 h-4" />
                   </motion.button>
-                </div>
+                </motion.div>
               </form>
             </div>
           </motion.div>
