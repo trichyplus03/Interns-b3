@@ -2,8 +2,6 @@ import { motion } from 'framer-motion'
 import {
   CheckCircle2,
   Image as ImageIcon,
-  Download,
-  Share2,
 } from 'lucide-react'
 import Button from './Button'
 
@@ -136,17 +134,6 @@ const PhotoCard = ({ photo, index }) => {
         className="w-full h-full object-cover rounded-2xl"
         loading="lazy"
       />
-      {/* Hover Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-purple-600/40 to-cyan-500/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-2xl">
-        <div className="flex gap-2.5 scale-90 group-hover:scale-100 transition-transform duration-300">
-          <button className="p-2.5 bg-white rounded-full text-purple-600 shadow-md hover:bg-purple-50 hover:scale-110 transition-all" title="Download">
-            <Download className="w-4 h-4" />
-          </button>
-          <button className="p-2.5 bg-white rounded-full text-cyan-600 shadow-md hover:bg-cyan-50 hover:scale-110 transition-all" title="Share">
-            <Share2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
     </motion.div>
   )
 }
