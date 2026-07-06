@@ -28,11 +28,15 @@ const plans = [
     ],
     featured: true,
   },
+ 
 ];
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-24 bg-white">
+   <section
+  id="pricing"
+  className="py-24 bg-gradient-to-b from-green-50 to-emerald-100"
+>
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Heading */}
@@ -87,7 +91,7 @@ export default function Pricing() {
               <button
   className={`w-full mt-auto py-3 rounded-xl font-semibold transition ${
     plan.featured
-      ? "bg-white text-green-700 hover:bg-green-100"
+      ? "bg-green-600 text-white hover:bg-green-700"
       : "bg-green-600 text-white hover:bg-green-700"
   }`}
 >

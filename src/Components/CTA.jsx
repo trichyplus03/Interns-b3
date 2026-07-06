@@ -3,8 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="relative overflow-hidden py-24 bg-gradient-to-r from-green-200 via-green-400 to-green-500">
-      {/* Background Blur Circles */}
+    <section className="relative overflow-hidden py-24 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500">
       <div className="absolute top-0 left-0 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-pink-300/10 rounded-full blur-3xl"></div>
 
